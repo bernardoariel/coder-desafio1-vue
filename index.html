@@ -35,17 +35,34 @@
         
         
     </div>
-      
-        <h3 
-        :class="['alert', (numero==0)?'alert-success':'alert-primary',(numero<0)? 'alert-danger': 'alert-primary']"
-        >Total Acumulado: <span v-show="numero>0">({{ numero }}+{{ base }})=</span>{{ numero }}</h3>
+
+    <div :class="['row','alert', (numero==0)?'alert-success':'alert-primary',(numero<0)? 'alert-danger': 'alert-primary']">
+        <div class="col-3 pt-2">
+            <h5>Total Acumulado: </h5>
+        </div>
+        <div class="col-8 pt-2">
+          
+            <span class="float-end" v-show="numero>0">({{ numero-base  }}+{{ base }})=</span>
+        </div>
+        <div class="col float-start">
+            
+            <input type="text"  :value="numero" readonly disabled class="form-control">
+        </div>
+
+        
+        
+    </div>
+        
         
         <button class="btn btn-primary" @click="calcular(base)">Sumar</button>
         <button class="btn btn-primary" @click="calcular(-base)">Restar</button>
         <br>
         <ul class="float-start">
             <li v-for="item in historial">{{item}}</li>
-            <li v-if="historial.length >=5" style="list-style:none;"><button class="btn btn-danger mt-2" @click="limpiar()">Limpiar Historial</button></li>
+            <li v-if="historial.length >=5" style="list-style:none;">
+                <button class="btn btn-warning mt-2" @click="limpiar()">Limpiar Historial </button>
+                <button class="btn btn-danger mt-2" @click="reiniciar()">Reiniciar App </button>
+            </li>
         </ul>
             
       
@@ -61,18 +78,37 @@
         data: {
             numero:0,
             base:1,
-            historial:[]
+            historial:[],
+            ultimoValor:0
         },
         methods:{
             calcular(valor){
+                this.ultimoValor = this.numero
                 this.numero +=valor
-                this.agregar()
+                this.agregar(valor)
             },
            
-            agregar(){
-                return this.historial.push(`Total Acumulado: (${this.numero}+${this.base})= ${this.numero}`)
+            agregar(valor){
+                if(valor == 0) return
+                if(valor>=1){
+
+                    this.historial.push(`Total Acumulado: (${ this.ultimoValor }+${valor})= ${this.numero}`);
+
+                }else{
+
+                    this.historial.push(`Total Acumulado: (${ this.ultimoValor }${valor})= ${this.numero}`);
+
+                } 
+                
+                
+                    
             },
             limpiar(){
+                this.historial = []
+            },
+            reiniciar(){
+                this.numero = 0;
+                this.base = 1;
                 this.historial = []
             }
         },
